@@ -107,9 +107,13 @@ class CountrySelectorState extends State<CountrySelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 70,
-          width: double.infinity,
+        Padding(
+           padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 24,
+          ),
           child: SearchBox(
             autofocus: widget.searchAutofocus,
             onChanged: _onSearch,
