@@ -12,7 +12,7 @@ class Country {
   final String countryCode;
 
   /// returns "+ [countryCode]"
-  String get displayCountryCode => '+ $countryCode';
+  String get displayCountryCode => '+$countryCode';
 
   Country(this.isoCode, this.name)
       : countryCode = countriesCountryCode[isoCode]!;
