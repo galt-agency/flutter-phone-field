@@ -54,8 +54,10 @@ class CountryList extends StatelessWidget {
     if (_allListElement.isEmpty) {
       return Center(
         child: Text(
-          noResultMessage ?? PhoneFieldLocalization.of(context)?.noResultMessage ?? 'No result found',
-          style: TextStyle(color: Colors.white),
+          noResultMessage ??
+              PhoneFieldLocalization.of(context)?.noResultMessage ??
+              'No result found',
+          style: const TextStyle(color: Colors.white),
           key: const ValueKey('no-result'),
         ),
       );

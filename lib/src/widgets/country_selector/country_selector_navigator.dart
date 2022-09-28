@@ -413,6 +413,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
         expand: false,
         builder: (context, scrollController) {
           return Container(
+            padding: const EdgeInsets.all(8),
             decoration: ShapeDecoration(
               color: Theme.of(context).canvasColor,
               shape: RoundedRectangleBorder(

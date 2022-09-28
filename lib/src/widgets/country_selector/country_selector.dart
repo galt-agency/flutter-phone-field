@@ -88,11 +88,14 @@ class CountrySelectorState extends State<CountrySelector> {
   @override
   didChangeDependencies() {
     super.didChangeDependencies();
-    final localization = PhoneFieldLocalization.of(context) ?? PhoneFieldLocalizationEn();
+    final localization =
+        PhoneFieldLocalization.of(context) ?? PhoneFieldLocalizationEn();
     final isoCodes = widget.countries ?? IsoCode.values;
     final countryRegistry = LocalizedCountryRegistry.cached(localization);
-    final notFavoriteCountries = countryRegistry.whereIsoIn(isoCodes, omit: widget.favoriteCountries);
-    final favoriteCountries = countryRegistry.whereIsoIn(widget.favoriteCountries);
+    final notFavoriteCountries =
+        countryRegistry.whereIsoIn(isoCodes, omit: widget.favoriteCountries);
+    final favoriteCountries =
+        countryRegistry.whereIsoIn(widget.favoriteCountries);
     _countryFinder = CountryFinder(notFavoriteCountries);
     _favoriteCountryFinder = CountryFinder(favoriteCountries, sort: false);
   }
@@ -107,20 +110,15 @@ class CountrySelectorState extends State<CountrySelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-           padding: const EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
-            bottom: 24,
-          ),
-          child: SearchBox(
-            autofocus: widget.searchAutofocus,
-            onChanged: _onSearch,
-            decoration: widget.searchBoxDecoration,
-            style: widget.searchBoxTextStyle,
-            searchIconColor: widget.searchBoxIconColor,
-          ),
+        SearchBox(
+          autofocus: widget.searchAutofocus,
+          onChanged: _onSearch,
+          decoration: widget.searchBoxDecoration,
+          style: widget.searchBoxTextStyle,
+          searchIconColor: widget.searchBoxIconColor,
+        ),
+        const SizedBox(
+          height: 24,
         ),
         Flexible(
           child: CountryList(
