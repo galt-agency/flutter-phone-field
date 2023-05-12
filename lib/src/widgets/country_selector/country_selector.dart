@@ -58,6 +58,7 @@ class CountrySelector extends StatefulWidget {
 
   /// The [Color] of the Search Icon in the Search Box
   final Color? searchBoxIconColor;
+  final double flagSize;
 
   const CountrySelector({
     Key? key,
@@ -75,6 +76,7 @@ class CountrySelector extends StatefulWidget {
     this.searchBoxDecoration,
     this.searchBoxTextStyle,
     this.searchBoxIconColor,
+    this.flagSize = 40,
   }) : super(key: key);
 
   @override
@@ -106,6 +108,14 @@ class CountrySelectorState extends State<CountrySelector> {
     setState(() {});
   }
 
+  onSubmitted() {
+    if (_favoriteCountryFinder.filteredCountries.isNotEmpty) {
+      widget.onCountrySelected(_favoriteCountryFinder.filteredCountries.first);
+    } else if (_countryFinder.filteredCountries.isNotEmpty) {
+      widget.onCountrySelected(_countryFinder.filteredCountries.first);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -120,12 +130,15 @@ class CountrySelectorState extends State<CountrySelector> {
         const SizedBox(
           height: 24,
         ),
+        const SizedBox(height: 16),
+        const Divider(height: 0, thickness: 1.2),
         Flexible(
           child: CountryList(
             favorites: _favoriteCountryFinder.filteredCountries,
             countries: _countryFinder.filteredCountries,
             showDialCode: widget.showCountryCode,
             onTap: widget.onCountrySelected,
+            flagSize: widget.flagSize,
             scrollController: widget.scrollController,
             scrollPhysics: widget.scrollPhysics,
             noResultMessage: widget.noResultMessage,

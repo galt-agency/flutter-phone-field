@@ -1,17 +1,17 @@
 import 'dart:async';
+import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phone_form_field/src/constants/constants.dart';
-import 'package:phone_form_field/src/helpers/validator_translator.dart';
-import 'package:phone_form_field/src/models/phone_field_controller.dart';
-import 'package:phone_form_field/src/models/phone_controller.dart';
-import 'package:phone_form_field/src/validator/phone_validator.dart';
-import 'package:phone_form_field/src/widgets/phone_field.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
+import '../constants/patterns.dart';
+import '../helpers/validator_translator.dart';
+import '../models/phone_controller.dart';
+import '../models/phone_field_controller.dart';
+import '../validator/phone_validator.dart';
 import 'country_selector/country_selector_navigator.dart';
-import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
+import 'phone_field.dart';
 
 part 'phone_form_field_state.dart';
 
@@ -95,6 +95,9 @@ class PhoneFormField extends FormField<PhoneNumber> {
   /// the focusNode of the national number
   final FocusNode? focusNode;
 
+  /// show Dial Code or not
+  final bool showDialCode;
+
   PhoneFormField({
     Key? key,
     this.controller,
@@ -129,7 +132,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
     bool enableSuggestions = true,
-    ToolbarOptions? toolbarOptions,
+    Widget Function(BuildContext, EditableTextState)? contextMenuBuilder,
     bool? showCursor,
     VoidCallback? onEditingComplete,
     ValueChanged<String>? onSubmitted,
@@ -152,6 +155,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
     Iterable<String>? autofillHints,
     String? restorationId,
     bool enableIMEPersonalizedLearning = true,
+    this.showDialCode = true,
   })  : assert(
           initialValue == null || controller == null,
           'One of initialValue or controller can be specified at a time',
@@ -161,7 +165,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
           autovalidateMode: autovalidateMode,
           enabled: enabled,
           initialValue:
-              controller != null ? controller.initialValue : initialValue,
+              controller != null ? controller.value : initialValue,
           onSaved: onSaved,
           validator: validator ?? PhoneValidator.valid(),
           restorationId: restorationId,
@@ -172,6 +176,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
               showFlagInInput: showFlagInInput,
               selectorNavigator: countrySelectorNavigator,
               errorText: field.getErrorText(),
+              showDialCode: showDialCode,
               flagSize: flagSize,
               decoration: decoration,
               enabled: enabled,
@@ -193,7 +198,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
               smartDashesType: smartDashesType,
               smartQuotesType: smartQuotesType,
               enableSuggestions: enableSuggestions,
-              toolbarOptions: toolbarOptions,
+              contextMenuBuilder: contextMenuBuilder,
               showCursor: showCursor,
               onEditingComplete: onEditingComplete,
               onSubmitted: onSubmitted,

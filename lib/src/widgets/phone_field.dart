@@ -2,7 +2,7 @@ import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:phone_form_field/src/constants/constants.dart';
+import 'package:phone_form_field/src/constants/patterns.dart';
 import 'package:phone_form_field/src/models/phone_field_controller.dart';
 
 import '../../phone_form_field.dart';
@@ -15,6 +15,7 @@ part 'phone_field_state.dart';
 class PhoneField extends StatefulWidget {
   final PhoneFieldController controller;
   final bool showFlagInInput;
+  final bool showDialCode;
   final String? errorText;
   final double flagSize;
   final InputDecoration decoration;
@@ -39,7 +40,7 @@ class PhoneField extends StatefulWidget {
   final SmartDashesType? smartDashesType;
   final SmartQuotesType? smartQuotesType;
   final bool enableSuggestions;
-  final ToolbarOptions? toolbarOptions;
+  final Widget Function(BuildContext, EditableTextState)? contextMenuBuilder;
   final bool? showCursor;
   final VoidCallback? onEditingComplete;
   final ValueChanged<String>? onSubmitted;
@@ -90,7 +91,7 @@ class PhoneField extends StatefulWidget {
     required this.smartDashesType,
     required this.smartQuotesType,
     required this.enableSuggestions,
-    required this.toolbarOptions,
+    required this.contextMenuBuilder,
     required this.showCursor,
     required this.onEditingComplete,
     required this.onSubmitted,
@@ -113,6 +114,7 @@ class PhoneField extends StatefulWidget {
     required this.restorationId,
     required this.enableIMEPersonalizedLearning,
     required this.inputFormatters,
+    required this.showDialCode,
   }) : super(key: key);
 
   @override

@@ -15,6 +15,7 @@ void main() {
       PhoneNumber? initialValue,
       PhoneController? controller,
       bool showFlagInInput = true,
+      bool showDialCode = true,
       IsoCode defaultCountry = IsoCode.US,
       bool shouldFormat = false,
       PhoneNumberInputValidator? validator,
@@ -34,6 +35,7 @@ void main() {
                 onChanged: onChanged,
                 onSaved: onSaved,
                 showFlagInInput: showFlagInInput,
+                showDialCode: showDialCode,
                 controller: controller,
                 defaultCountry: defaultCountry,
                 shouldFormat: shouldFormat,
@@ -66,7 +68,7 @@ void main() {
         await tester.pumpWidget(getWidget());
         expect(find.byType(CountryList), findsNothing);
         await tester.tap(find.byType(PhoneFormField));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         await tester.tap(find.byType(CountryCodeChip));
         await tester.pumpAndSettle();
         expect(find.byType(CountryList), findsOneWidget);
@@ -79,6 +81,51 @@ void main() {
       testWidgets('Should hide flag', (tester) async {
         await tester.pumpWidget(getWidget(showFlagInInput: false));
         expect(find.byType(CircleFlag), findsNothing);
+      });
+
+      testWidgets('Should format when shouldFormat is true', (tester) async {
+        PhoneNumber? phoneNumber = PhoneNumber.parse(
+          '',
+          destinationCountry: IsoCode.FR,
+        );
+
+        await tester.pumpWidget(
+            getWidget(initialValue: phoneNumber, shouldFormat: true));
+        await tester.pump(const Duration(seconds: 1));
+        final phoneField = find.byType(PhoneFormField);
+        await tester.enterText(phoneField, '677777777');
+        await tester.pump(const Duration(seconds: 1));
+        expect(find.text('6 77 77 77 77'), findsOneWidget);
+      });
+
+      testWidgets('Should show dial code when showDialCode is true',
+          (tester) async {
+        PhoneNumber? phoneNumber = PhoneNumber.parse(
+          '',
+          destinationCountry: IsoCode.FR,
+        );
+
+        await tester.pumpWidget(getWidget(
+            initialValue: phoneNumber,
+            showDialCode: true,
+            defaultCountry: IsoCode.FR));
+        await tester.pump(const Duration(seconds: 1));
+        expect(find.text('+ 33'), findsOneWidget);
+      });
+
+      testWidgets('Should hide dial code when showDialCode is false',
+          (tester) async {
+        PhoneNumber? phoneNumber = PhoneNumber.parse(
+          '',
+          destinationCountry: IsoCode.FR,
+        );
+
+        await tester.pumpWidget(getWidget(
+            initialValue: phoneNumber,
+            showDialCode: false,
+            defaultCountry: IsoCode.FR));
+        await tester.pump(const Duration(seconds: 1));
+        expect(find.text('+ 33'), findsNothing);
       });
     });
 
@@ -126,7 +173,7 @@ void main() {
             getWidget(controller: controller, defaultCountry: IsoCode.US));
         controller.value =
             PhoneNumber.parse('488997722', destinationCountry: IsoCode.FR);
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(find.text('+ 33'), findsWidgets);
         expect(find.text('488997722'), findsOneWidget);
       });
@@ -169,10 +216,10 @@ void main() {
         await tester.tap(phoneField);
         // non digits should not work
         await tester.enterText(phoneField, 'aaa');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(changed, equals(false));
         await tester.enterText(phoneField, '123');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(changed, equals(true));
         expect(phoneNumber,
             equals(PhoneNumber.parse('123', destinationCountry: IsoCode.FR)));
@@ -189,7 +236,7 @@ void main() {
         await tester.pumpWidget(getWidget(initialValue: phoneNumber));
         final phoneField = find.byType(PhoneFormField);
         await tester.enterText(phoneField, '9984');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
 
         expect(find.text('Invalid phone number'), findsOneWidget);
       });
@@ -246,10 +293,10 @@ void main() {
 
         await tester.pumpWidget(
             getWidget(initialValue: phoneNumber, shouldFormat: true));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         final phoneField = find.byType(PhoneFormField);
         await tester.enterText(phoneField, '677777777');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(find.text('6 77 77 77 77'), findsOneWidget);
       });
       testWidgets('Should not format when shouldFormat is false',
@@ -261,10 +308,10 @@ void main() {
 
         await tester.pumpWidget(
             getWidget(initialValue: phoneNumber, shouldFormat: false));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         final phoneField = find.byType(PhoneFormField);
         await tester.enterText(phoneField, '677777777');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(find.text('677777777'), findsOneWidget);
       });
     });
@@ -287,9 +334,9 @@ void main() {
         ));
         final phoneField = find.byType(PhoneFormField);
         await tester.enterText(phoneField, '479281938');
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         formKey.currentState?.save();
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(saved, isTrue);
         expect(
             phoneNumber,
@@ -306,13 +353,13 @@ void main() {
         );
 
         await tester.pumpWidget(getWidget(initialValue: phoneNumber));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         const national = '123456';
         final phoneField = find.byType(PhoneFormField);
         await tester.enterText(phoneField, national);
         expect(find.text(national), findsOneWidget);
         formKey.currentState?.reset();
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
         expect(find.text(national), findsNothing);
       });
     });

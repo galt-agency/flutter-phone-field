@@ -17,6 +17,8 @@ abstract class CountrySelectorNavigator {
   final TextStyle? searchBoxTextStyle;
   final Color? searchBoxIconColor;
   final ScrollPhysics? scrollPhysics;
+  final double flagSize;
+  final bool useRootNavigator;
 
   const CountrySelectorNavigator({
     this.countries,
@@ -32,11 +34,13 @@ abstract class CountrySelectorNavigator {
     this.searchBoxTextStyle,
     this.searchBoxIconColor,
     this.scrollPhysics,
+    this.flagSize = 40,
+    this.useRootNavigator = true,
   });
 
   Future<Country?> navigate(BuildContext context);
 
-  dynamic _getCountrySelector({
+  CountrySelector _getCountrySelector({
     required ValueChanged<Country> onCountrySelected,
     ScrollController? scrollController,
   }) {
@@ -55,6 +59,7 @@ abstract class CountrySelectorNavigator {
       searchBoxTextStyle: searchBoxTextStyle,
       searchBoxIconColor: searchBoxIconColor,
       scrollPhysics: scrollPhysics,
+      flagSize: flagSize,
     );
   }
 
@@ -134,6 +139,7 @@ abstract class CountrySelectorNavigator {
     List<IsoCode>? favorites,
     bool addSeparator,
     bool showCountryCode,
+    double flagSize,
     bool sortCountries,
     String? noResultMessage,
     bool searchAutofocus,
@@ -191,7 +197,8 @@ class DialogNavigator extends CountrySelectorNavigator {
           width: width,
           height: height,
           child: _getCountrySelector(
-            onCountrySelected: (country) => Navigator.pop(context, country),
+            onCountrySelected: (country) =>
+                Navigator.of(context, rootNavigator: true).pop(country),
           ),
         ),
       ),
@@ -230,8 +237,7 @@ class SearchDelegateNavigator extends CountrySelectorNavigator {
           scrollPhysics: scrollPhysics,
         );
 
-  @override
-  dynamic _getCountrySelector({
+  CountrySelectorSearchDelegate _getCountrySelectorSearchDelegate({
     required ValueChanged<Country> onCountrySelected,
     ScrollController? scrollController,
   }) {
@@ -244,6 +250,8 @@ class SearchDelegateNavigator extends CountrySelectorNavigator {
       noResultMessage: noResultMessage,
       searchAutofocus: searchAutofocus,
       showCountryCode: showCountryCode,
+      titleStyle: titleStyle,
+      subtitleStyle: subtitleStyle,
     );
   }
 
@@ -251,7 +259,7 @@ class SearchDelegateNavigator extends CountrySelectorNavigator {
   Future<Country?> navigate(BuildContext context) {
     return showSearch(
       context: context,
-      delegate: _getCountrySelector(
+      delegate: _getCountrySelectorSearchDelegate(
         onCountrySelected: (country) => Navigator.pop(context, country),
       ),
     );
@@ -294,11 +302,16 @@ class BottomSheetNavigator extends CountrySelectorNavigator {
     Country? selected;
     final ctrl = showBottomSheet(
       context: context,
-      builder: (_) => _getCountrySelector(
-        onCountrySelected: (country) {
-          selected = country;
-          Navigator.pop(context, country);
-        },
+      builder: (_) => MediaQuery(
+        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window),
+        child: SafeArea(
+          child: _getCountrySelector(
+            onCountrySelected: (country) {
+              selected = country;
+              Navigator.pop(context, country);
+            },
+          ),
+        ),
       ),
     );
     return ctrl.closed.then((_) => selected);
@@ -361,7 +374,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
   final BorderRadiusGeometry? borderRadius;
 
   const DraggableModalBottomSheetNavigator._({
-    this.initialChildSize = 0.5,
+    this.initialChildSize = 0.7,
     this.minChildSize = 0.25,
     this.maxChildSize = 0.85,
     this.borderRadius,
@@ -370,6 +383,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
     bool addSeparator = true,
     bool showCountryCode = true,
     bool sortCountries = false,
+    double flagSize = 40,
     String? noResultMessage,
     bool searchAutofocus = kIsWeb,
     TextStyle? subtitleStyle,
@@ -378,6 +392,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
     TextStyle? searchBoxTextStyle,
     Color? searchBoxIconColor,
     ScrollPhysics? scrollPhysics,
+    bool useRootNavigator = true,
   }) : super(
           countries: countries,
           favorites: favorites,
@@ -392,6 +407,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
           searchBoxTextStyle: searchBoxTextStyle,
           searchBoxIconColor: searchBoxIconColor,
           scrollPhysics: scrollPhysics,
+          flagSize: flagSize,
         );
 
   @override
@@ -427,6 +443,7 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
           );
         },
       ),
+      useRootNavigator: useRootNavigator,
       isScrollControlled: true,
     );
   }
