@@ -126,12 +126,11 @@ class CountrySelectorState extends State<CountrySelector> {
           decoration: widget.searchBoxDecoration,
           style: widget.searchBoxTextStyle,
           searchIconColor: widget.searchBoxIconColor,
+          onSubmitted: onSubmitted,
         ),
         const SizedBox(
-          height: 24,
+          height: 16,
         ),
-        const SizedBox(height: 16),
-        const Divider(height: 0, thickness: 1.2),
         Flexible(
           child: CountryList(
             favorites: _favoriteCountryFinder.filteredCountries,
