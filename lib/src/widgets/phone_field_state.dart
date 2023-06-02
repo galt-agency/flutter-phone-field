@@ -48,56 +48,91 @@ class PhoneFieldState extends State<PhoneField> {
           // absorb pointer when the country chip is not shown, else flutter
           // still allows the country chip to be clicked even though it is not shown
           absorbing: _isEffectivelyEmpty() && !controller.focusNode.hasFocus,
-          child: InputDecorator(
-            decoration: _getOutterInputDecoration(),
-            isFocused: controller.focusNode.hasFocus,
-            isEmpty: _isEffectivelyEmpty(),
-            child: TextField(
-              focusNode: controller.focusNode,
-              controller: controller.nationalNumberController,
-              enabled: widget.enabled,
-              decoration: _getInnerInputDecoration(),
-              inputFormatters: widget.inputFormatters ??
-                  [
-                    FilteringTextInputFormatter.allow(RegExp(
-                        '[${Patterns.plus}${Patterns.digits}${Patterns.punctuation}]')),
-                  ],
-              autofillHints: widget.autofillHints,
-              keyboardType: widget.keyboardType,
-              textInputAction: widget.textInputAction,
-              style: widget.style,
-              strutStyle: widget.strutStyle,
-              textAlign: widget.textAlign,
-              textAlignVertical: widget.textAlignVertical,
-              autofocus: widget.autofocus,
-              obscuringCharacter: widget.obscuringCharacter,
-              obscureText: widget.obscureText,
-              autocorrect: widget.autocorrect,
-              smartDashesType: widget.smartDashesType,
-              smartQuotesType: widget.smartQuotesType,
-              enableSuggestions: widget.enableSuggestions,
-              contextMenuBuilder: widget.contextMenuBuilder,
-              showCursor: widget.showCursor,
-              onEditingComplete: widget.onEditingComplete,
-              onSubmitted: widget.onSubmitted,
-              onAppPrivateCommand: widget.onAppPrivateCommand,
-              cursorWidth: widget.cursorWidth,
-              cursorHeight: widget.cursorHeight,
-              cursorRadius: widget.cursorRadius,
-              cursorColor: widget.cursorColor,
-              selectionHeightStyle: widget.selectionHeightStyle,
-              selectionWidthStyle: widget.selectionWidthStyle,
-              keyboardAppearance: widget.keyboardAppearance,
-              scrollPadding: widget.scrollPadding,
-              enableInteractiveSelection: widget.enableInteractiveSelection,
-              selectionControls: widget.selectionControls,
-              mouseCursor: widget.mouseCursor,
-              scrollController: widget.scrollController,
-              scrollPhysics: widget.scrollPhysics,
-              restorationId: widget.restorationId,
-              enableIMEPersonalizedLearning:
-                  widget.enableIMEPersonalizedLearning,
-            ),
+          child: Row(
+            children: [
+              Container(
+                  height: Theme.of(context)
+                      .inputDecorationTheme
+                      .constraints
+                      ?.maxHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: (Theme.of(context).inputDecorationTheme.border
+                            is OutlineInputBorder)
+                        ? (Theme.of(context).inputDecorationTheme.border
+                                as OutlineInputBorder)
+                            .borderRadius
+                        : null,
+                    color: Theme.of(context).inputDecorationTheme.fillColor,
+                    border: Border.all(
+                      color: widget.decoration.border?.borderSide.color ??
+                          Theme.of(context)
+                              .inputDecorationTheme
+                              .border
+                              ?.borderSide
+                              .color ??
+                          Colors.white,
+                      width: widget.decoration.border?.borderSide.width ??
+                          const InputDecoration().border?.borderSide.width ??
+                          1.0,
+                    ),
+                  ),
+                  child: _getCountryCodeChip()),
+              const SizedBox(width: 12),
+              Expanded(
+                child: InputDecorator(
+                  decoration: _getOutterInputDecoration(),
+                  isFocused: controller.focusNode.hasFocus,
+                  isEmpty: _isEffectivelyEmpty(),
+                  child: TextField(
+                    focusNode: controller.focusNode,
+                    controller: controller.nationalNumberController,
+                    enabled: widget.enabled,
+                    decoration: _getInnerInputDecoration(),
+                    inputFormatters: widget.inputFormatters ??
+                        [
+                          FilteringTextInputFormatter.allow(RegExp(
+                              '[${Patterns.plus}${Patterns.digits}${Patterns.punctuation}]')),
+                        ],
+                    autofillHints: widget.autofillHints,
+                    keyboardType: widget.keyboardType,
+                    textInputAction: widget.textInputAction,
+                    style: widget.style,
+                    strutStyle: widget.strutStyle,
+                    textAlign: widget.textAlign,
+                    textAlignVertical: widget.textAlignVertical,
+                    autofocus: widget.autofocus,
+                    obscuringCharacter: widget.obscuringCharacter,
+                    obscureText: widget.obscureText,
+                    autocorrect: widget.autocorrect,
+                    smartDashesType: widget.smartDashesType,
+                    smartQuotesType: widget.smartQuotesType,
+                    enableSuggestions: widget.enableSuggestions,
+                    contextMenuBuilder: widget.contextMenuBuilder,
+                    showCursor: widget.showCursor,
+                    onEditingComplete: widget.onEditingComplete,
+                    onSubmitted: widget.onSubmitted,
+                    onAppPrivateCommand: widget.onAppPrivateCommand,
+                    cursorWidth: widget.cursorWidth,
+                    cursorHeight: widget.cursorHeight,
+                    cursorRadius: widget.cursorRadius,
+                    cursorColor: widget.cursorColor,
+                    selectionHeightStyle: widget.selectionHeightStyle,
+                    selectionWidthStyle: widget.selectionWidthStyle,
+                    keyboardAppearance: widget.keyboardAppearance,
+                    scrollPadding: widget.scrollPadding,
+                    enableInteractiveSelection:
+                        widget.enableInteractiveSelection,
+                    selectionControls: widget.selectionControls,
+                    mouseCursor: widget.mouseCursor,
+                    scrollController: widget.scrollController,
+                    scrollPhysics: widget.scrollPhysics,
+                    restorationId: widget.restorationId,
+                    enableIMEPersonalizedLearning:
+                        widget.enableIMEPersonalizedLearning,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -152,15 +187,15 @@ class PhoneFieldState extends State<PhoneField> {
   }
 
   InputDecoration _getOutterInputDecoration() {
-    final directionality = Directionality.of(context);
+    // final directionality = Directionality.of(context);
 
     return widget.decoration.copyWith(
       hintText: null,
       errorText: widget.errorText,
-      prefix:
-          directionality == TextDirection.ltr ? _getCountryCodeChip() : null,
-      suffix:
-          directionality == TextDirection.rtl ? _getCountryCodeChip() : null,
+      // prefix:
+      //     directionality == TextDirection.ltr ? _getCountryCodeChip() : null,
+      // suffix:
+      //     directionality == TextDirection.rtl ? _getCountryCodeChip() : null,
     );
   }
 
